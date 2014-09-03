@@ -95,20 +95,34 @@ window.addEventListener("load", function(){
 			console.log("Complete.");
 			clearInterval(t);
 			var _keys = document.querySelectorAll("div.key");
+			var oldKey;
 			for (var i = 0; i < _keys.length; i++) {
 				var keyId = _keys[i].id;
 				console.log(SoundPool.getSound(keyId));
+
 				_keys[i].addEventListener("touchstart", function(id){
+					// console.log(this);
 					console.log("touchStart : " + id);
 					SoundPool.getSound(id).play();
+					oldKey = document.elementFromPoint(event.targetTouches[0].pageX, event.targetTouches[0].pageY).id;
+					console.log(oldKey);
 				}.bind(this, keyId), false);
 
-				// _keys[i].addEventListener("touchmove", function(e){
-				// 	e.preventDefault();
-				// 	// console.log("touchMove : " + id);
-				// 	console.log(event.targetTouches);
-				// 	SoundPool.getSound(event.targetTouches[0].target.id).play();
-				// }, false);
+				_keys[i].addEventListener("touchmove", function(){
+					event.preventDefault();
+					var newKey = document.elementFromPoint(event.targetTouches[0].pageX, event.targetTouches[0].pageY).id;
+					if (oldKey !== newKey) {
+						console.log("key changed.");
+						console.log("oldKey : " + oldKey + ", newKey : " + newKey);
+						SoundPool.getSound(oldKey).pause();
+						SoundPool.getSound(oldKey).currentTime = 0;
+						SoundPool.getSound(newKey).play();
+						oldKey = newKey;
+					}
+					console.log("oldKey : " + oldKey + ", newKey : " + newKey);
+					// console.log(document.elementFromPoint(event.targetTouches[0].pageX, event.targetTouches[0].pageY).id);
+					// SoundPool.getSound(event.targetTouches[0].target.id).play();
+				}, false);
 
 				_keys[i].addEventListener("touchend", function(id){
 					console.log("touchEnd : " + id);
