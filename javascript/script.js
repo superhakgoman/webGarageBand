@@ -91,7 +91,8 @@ window.addEventListener("load", function(){
 			var newKey;
 
 			document.body.addEventListener("touchstart", function(){
-				oldKey = document.elementFromPoint(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
+				// console.log("x : " + event.targetTouches[0].screenX + ", y : " + event.targetTouches[0].screenY);
+				oldKey = document.elementFromPoint(event.targetTouches[0].screenX, event.targetTouches[0].pageY);
 				if (oldKey.className === "key") {
 					SoundPool.getSound(oldKey.id).play();
 					changeKeyColor(oldKey, true);
@@ -99,29 +100,39 @@ window.addEventListener("load", function(){
 			}, false);
 
 			document.body.addEventListener("touchmove", function(){
+				newKey = document.elementFromPoint(event.targetTouches[0].screenX, event.targetTouches[0].pageY);
 				if (canScroll === false) {
 					event.preventDefault();
+					if (newKey !== null && newKey.className === "key" && oldKey.id !== newKey.id) {
+						console.log("key changed.");
+						SoundPool.getSound(oldKey.id).pause();
+						SoundPool.getSound(oldKey.id).currentTime = 0;						
+						changeKeyColor(oldKey, false);
+						changeKeyColor(newKey, true);
+						SoundPool.getSound(newKey.id).play();
+						oldKey = newKey;
+					}
 				}
-				newKey = document.elementFromPoint(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
-				if (newKey.className === "key" && oldKey.id !== newKey.id) {
-					console.log("key changed.");
+				if (newKey === null || oldKey !== newKey) {
 					SoundPool.getSound(oldKey.id).pause();
 					SoundPool.getSound(oldKey.id).currentTime = 0;						
 					changeKeyColor(oldKey, false);
-					changeKeyColor(newKey, true);
-					SoundPool.getSound(newKey.id).play();
-					oldKey = newKey;
 				}
+
 			}, false);
 
 			document.body.addEventListener("touchend", function(){
-				var key = document.elementFromPoint(event.changedTouches[0].pageX, event.changedTouches[0].pageY);
-				console.log(key.id);
-				if (key.className === "key") {
+				var key = document.elementFromPoint(event.changedTouches[0].screenX, event.changedTouches[0].pageY);
+				// console.log(key.id);
+				if (key !== null && key.className === "key") {
 					changeKeyColor(key, false);
 					SoundPool.getSound(key.id).pause();
 					SoundPool.getSound(key.id).currentTime = 0;
 				}
+			}, false);
+
+			document.body.addEventListener("contextmenu", function(e){
+				e.preventDefault();
 			}, false);
 
 			var scrollLock = document.getElementById("scrollLock");
@@ -134,8 +145,8 @@ window.addEventListener("load", function(){
 				}
 			}, false);
 
-			var loadMessage = document.querySelector("body p");
-			document.body.removeChild(loadMessage);
+			var loadingMessage = document.querySelector("#LoadingMessage");
+			document.body.removeChild(loadingMessage);
 		}
 	}, 10);
 }, false);
