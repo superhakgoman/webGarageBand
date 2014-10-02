@@ -10,7 +10,7 @@ body div div{
 }
 div.keyboard{
 	position: absolute;
-	width: 1000%;
+	width: 200%;
 	height: 70%;
 	overflow-x: scroll;
 	overflow-y: hidden;
@@ -22,17 +22,22 @@ div#blackKeys div{
 	background-color: black;
 	height: 50%;
 	z-index: 3;
+	/*border: none;*/
 }
 
-div#blackKeys{
-	margin-left: 35px;
+div#blackKeys{;
+	/*margin-left: 5.5%;*/
+	margin-left: 29px;
 }
 
 #LoadingMessage{
-	background-color: #aaaaaa;
+	z-index: 4;
+	background-color: rgba(200, 200, 200, 100);
 	position: fixed;
 	text-align: center;
+	line-height: 400%;
 	font-size: 500%;
+	color: white;
 	width: 100%;
 	height: 100%;
 	margin: 0px;
@@ -49,8 +54,10 @@ div#controlBox{
 	height: 10%;
 	margin-bottom: 1%;
 	border: none;
+	background-color: #222222;
 }
 div.controls{
+	z-index: 3;
 	border-color: black;
 	border-style: solid;
 	border-width: 0px;
@@ -62,7 +69,23 @@ div.key{
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
-	margin-right: 5px;
-	width: 70px;
+	margin-right: 4px;
+	width: 50px;
+	/*width: 70px;*/
 	height: 99%;
+}
+
+#octaveSwitch{
+
+}
+
+#scrollLock{
+}
+
+#controlBox div img{
+	z-index: 1;
+	height: 100%;
+	position: absolute;
+	left: 50%;
+	margin-left: -25%;
 }

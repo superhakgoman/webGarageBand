@@ -65,6 +65,7 @@ function initSoundPool(){
 }
 
 var canScroll = false;
+var isSustain = false;
 
 function changeKeyColor(key, pressed){
 	if (pressed === true) {
@@ -81,6 +82,33 @@ function changeKeyColor(key, pressed){
 }
 
 window.addEventListener("load", function(){
+	var keyBoardWidth = 0;
+	var allWhiteKey = document.querySelectorAll("#whiteKeys div");
+
+	for (var i = 0; i < allWhiteKey.length; i++) {
+		keyBoardWidth += allWhiteKey[i].offsetWidth;
+	}
+
+	keyBoardWidth += allWhiteKey.length * 4;
+
+	var keyboard = document.querySelectorAll("div.keyboard");
+	for (var i = 0; i < keyboard.length; i++) {
+		keyboard[i].style.width = keyBoardWidth + "px";
+	}
+
+	for (var i = 0; i < 5; i++) {
+		var fBlackKey = document.getElementById(i + "Fs");
+		if (fBlackKey !== null) {
+			fBlackKey.style.marginLeft = "55px";
+		}
+		if (i !== 3) {
+			var	cBlackKey = document.getElementById(i + "Cs");
+		}
+		if (cBlackKey !== null && cBlackKey !== undefined) {
+			cBlackKey.style.marginLeft = "55px";
+		}
+	}
+	
 	initSoundPool();
 	t = setInterval(function(){
 		console.log("Load sound resources...");
@@ -92,7 +120,8 @@ window.addEventListener("load", function(){
 
 			document.body.addEventListener("touchstart", function(){
 				// console.log("x : " + event.targetTouches[0].screenX + ", y : " + event.targetTouches[0].screenY);
-				oldKey = document.elementFromPoint(event.targetTouches[0].screenX, event.targetTouches[0].pageY);
+				oldKey = document.elementFromPoint(event.targetTouches[0].clientX, event.targetTouches[0].pageY);
+				// oldKey = event.targetTouches[0].target;
 				if (oldKey.className === "key") {
 					SoundPool.getSound(oldKey.id).play();
 					changeKeyColor(oldKey, true);
@@ -100,10 +129,10 @@ window.addEventListener("load", function(){
 			}, false);
 
 			document.body.addEventListener("touchmove", function(){
-				newKey = document.elementFromPoint(event.targetTouches[0].screenX, event.targetTouches[0].pageY);
+				newKey = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].pageY);
 				if (canScroll === false) {
 					event.preventDefault();
-					if (newKey !== null && newKey.className === "key" && oldKey.id !== newKey.id) {
+					if (newKey !== null && oldKey.className === "key" && newKey.className === "key" && oldKey.id !== newKey.id) {
 						console.log("key changed.");
 						SoundPool.getSound(oldKey.id).pause();
 						SoundPool.getSound(oldKey.id).currentTime = 0;						
@@ -113,7 +142,7 @@ window.addEventListener("load", function(){
 						oldKey = newKey;
 					}
 				}
-				if (newKey === null || oldKey !== newKey) {
+				if ((newKey === null || oldKey !== newKey) && oldKey.className === "key") {
 					SoundPool.getSound(oldKey.id).pause();
 					SoundPool.getSound(oldKey.id).currentTime = 0;						
 					changeKeyColor(oldKey, false);
@@ -122,7 +151,7 @@ window.addEventListener("load", function(){
 			}, false);
 
 			document.body.addEventListener("touchend", function(){
-				var key = document.elementFromPoint(event.changedTouches[0].screenX, event.changedTouches[0].pageY);
+				var key = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].pageY);
 				// console.log(key.id);
 				if (key !== null && key.className === "key") {
 					changeKeyColor(key, false);
@@ -139,9 +168,20 @@ window.addEventListener("load", function(){
 			scrollLock.addEventListener("touchstart", function(){
 				canScroll = !canScroll;
 				if (canScroll === true) {
-					scrollLock.innerText = "스크롤 끄기";
+					scrollLock.children[0].style.zIndex = 3;
 				} else if (canScroll === false){
-					scrollLock.innerText = "스크롤 켜기";
+					scrollLock.children[0].style.zIndex = 0;
+				}
+			}, false);
+
+			var sustain = document.getElementById("sustain");
+			sustain.addEventListener("touchstart", function(){
+				isSustain = !isSustain;
+				if (isSustain === true) {
+					sustain.children[0].style.zIndex = 3;
+				} else if (isSustain === false){
+					console.log(sustain.children);
+					sustain.children[0].style.zIndex = 0;
 				}
 			}, false);
 
